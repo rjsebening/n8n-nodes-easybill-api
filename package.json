@@ -1,0 +1,65 @@
+{
+  "name": "n8n-nodes-easybill-api",
+  "version": "0.0.1",
+  "description": "n8n node for the Easybill REST API, allowing management of documents, customers, positions, and more.",
+  "type": "commonjs",
+  "keywords": [
+    "n8n-community-node-package",
+    "easybill"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/rjsebening/n8n-nodes-easybill-api",
+  "author": {
+    "name": "Jörg Sebening",
+    "email": "dev@joerg-sebening.com"
+  },
+  "bugs": {
+    "url": "https://github.com/rjsebening/n8n-nodes-easybill-api/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rjsebening/n8n-nodes-easybill-api.git"
+  },
+  "engines": {
+    "node": ">=20.15"
+  },
+  "main": "index.js",
+  "scripts": {
+    "build": "npx rimraf dist && tsc && gulp build:icons",
+    "dev": "tsc --watch",
+    "format": "prettier nodes credentials --write",
+    "lint": "eslint nodes credentials --ext .ts",
+    "lint:fix": "eslint nodes credentials --ext .ts --fix",
+    "lint:all": "npm run lint && npm run lint:node"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE.md"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+  "nodes": [
+    "dist/nodes/EasybillApi/EasybillApi.node.js",
+    "dist/nodes/EasybillApi/EasybillApiTrigger.node.js"
+  ],
+  "credentials": [
+    "dist/credentials/EasybillApiBasicApi.credentials.js",
+    "dist/credentials/EasybillApiBearerApi.credentials.js"
+  ]
+  },
+  "devDependencies": {
+    "@typescript-eslint/parser": "~8.32.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-n8n-nodes-base": "^1.16.3",
+    "gulp": "^5.0.0",
+    "prettier": "^3.7.4",
+    "typescript": "^5.8.2"
+  },
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
