@@ -8,7 +8,7 @@ export async function create(this: IExecuteFunctions, index: number): Promise<IN
 	const additional = this.getNodeParameter('additionalFields', index) as any;
 
 	const body = { number, description, sale_price: salePrice, ...additional };
-	const responseData = await easybillApiRequest.call(this, 'POST', '/positions', body);
+	const responseData = await easybillApiRequest.call(this, 'POST', '/positions', { body });
 	return this.helpers.returnJsonArray(responseData);
 }
 
@@ -20,7 +20,7 @@ export async function update(this: IExecuteFunctions, index: number): Promise<IN
 	const additional = this.getNodeParameter('additionalFields', index) as any;
 
 	const body = { number, description, sale_price: salePrice, ...additional };
-	const responseData = await easybillApiRequest.call(this, 'PUT', `/positions/${id}`, body);
+	const responseData = await easybillApiRequest.call(this, 'PUT', `/positions/${id}`, { body });
 	return this.helpers.returnJsonArray(responseData);
 }
 

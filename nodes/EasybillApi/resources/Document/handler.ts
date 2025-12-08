@@ -71,7 +71,7 @@ export async function create(this: IExecuteFunctions, index: number): Promise<IN
 		body.items = itemsJson;
 	}
 
-	const responseData = await easybillApiRequest.call(this, 'POST', '/documents', body);
+	const responseData = await easybillApiRequest.call(this, 'POST', '/documents', { body });
 
 	return this.helpers.returnJsonArray(responseData);
 }
@@ -98,7 +98,7 @@ export async function update(this: IExecuteFunctions, index: number): Promise<IN
 		body.items = itemsJson;
 	}
 
-	const responseData = await easybillApiRequest.call(this, 'PUT', `/documents/${id}`, body);
+	const responseData = await easybillApiRequest.call(this, 'PUT', `/documents/${id}`, { body });
 
 	return this.helpers.returnJsonArray(responseData);
 }

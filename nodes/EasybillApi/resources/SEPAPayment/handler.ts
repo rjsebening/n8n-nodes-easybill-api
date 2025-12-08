@@ -26,7 +26,7 @@ export async function create(this: IExecuteFunctions, index: number): Promise<IN
 		...additional,
 	};
 
-	const responseData = await easybillApiRequest.call(this, 'POST', '/sepa-payments', body);
+	const responseData = await easybillApiRequest.call(this, 'POST', '/sepa-payments', { body });
 	return this.helpers.returnJsonArray(responseData);
 }
 
@@ -56,7 +56,7 @@ export async function update(this: IExecuteFunctions, index: number): Promise<IN
 		...additional,
 	};
 
-	const responseData = await easybillApiRequest.call(this, 'PUT', `/sepa-payments/${id}`, body);
+	const responseData = await easybillApiRequest.call(this, 'PUT', `/sepa-payments/${id}`, { body });
 	return this.helpers.returnJsonArray(responseData);
 }
 

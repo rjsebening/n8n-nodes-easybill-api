@@ -10,7 +10,7 @@ export async function create(this: IExecuteFunctions, index: number): Promise<IN
 		...additionalFields,
 	};
 
-	const responseData = await easybillApiRequest.call(this, 'POST', '/time-trackings', body);
+	const responseData = await easybillApiRequest.call(this, 'POST', '/time-trackings', { body });
 	return this.helpers.returnJsonArray(responseData);
 }
 
@@ -24,7 +24,7 @@ export async function update(this: IExecuteFunctions, index: number): Promise<IN
 		...additionalFields,
 	};
 
-	const responseData = await easybillApiRequest.call(this, 'PUT', `/time-trackings/${id}`, body);
+	const responseData = await easybillApiRequest.call(this, 'PUT', `/time-trackings/${id}`, { body });
 	return this.helpers.returnJsonArray(responseData);
 }
 

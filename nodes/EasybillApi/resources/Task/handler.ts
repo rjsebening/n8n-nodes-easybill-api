@@ -12,7 +12,7 @@ export async function create(this: IExecuteFunctions, index: number): Promise<IN
 		...additionalFields,
 	};
 
-	const responseData = await easybillApiRequest.call(this, 'POST', '/tasks', body);
+	const responseData = await easybillApiRequest.call(this, 'POST', '/tasks', { body });
 	return this.helpers.returnJsonArray(responseData);
 }
 
@@ -28,7 +28,7 @@ export async function update(this: IExecuteFunctions, index: number): Promise<IN
 		...additionalFields,
 	};
 
-	const responseData = await easybillApiRequest.call(this, 'PUT', `/tasks/${id}`, body);
+	const responseData = await easybillApiRequest.call(this, 'PUT', `/tasks/${id}`, { body });
 	return this.helpers.returnJsonArray(responseData);
 }
 

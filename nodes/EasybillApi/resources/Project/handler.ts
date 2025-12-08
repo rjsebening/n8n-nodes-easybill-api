@@ -5,7 +5,7 @@ export async function create(this: IExecuteFunctions, index: number): Promise<IN
 	const name = this.getNodeParameter('name', index) as string;
 	const additional = this.getNodeParameter('additionalFields', index) as any;
 	const body = { name, ...additional };
-	const responseData = await easybillApiRequest.call(this, 'POST', '/projects', body);
+	const responseData = await easybillApiRequest.call(this, 'POST', '/projects', { body });
 	return this.helpers.returnJsonArray(responseData);
 }
 
@@ -14,7 +14,7 @@ export async function update(this: IExecuteFunctions, index: number): Promise<IN
 	const name = this.getNodeParameter('name', index) as string;
 	const additional = this.getNodeParameter('additionalFields', index) as any;
 	const body = { name, ...additional };
-	const responseData = await easybillApiRequest.call(this, 'PUT', `/projects/${id}`, body);
+	const responseData = await easybillApiRequest.call(this, 'PUT', `/projects/${id}`, { body });
 	return this.helpers.returnJsonArray(responseData);
 }
 

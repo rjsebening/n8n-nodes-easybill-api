@@ -17,7 +17,7 @@ export async function create(this: IExecuteFunctions, index: number): Promise<IN
 		body.emails = body.emails.split(',').map((e: string) => e.trim());
 	}
 
-	const responseData = await easybillApiRequest.call(this, 'POST', `/customers/${customerId}/contacts`, body);
+	const responseData = await easybillApiRequest.call(this, 'POST', `/customers/${customerId}/contacts`, { body });
 	return this.helpers.returnJsonArray(responseData);
 }
 
@@ -38,7 +38,7 @@ export async function update(this: IExecuteFunctions, index: number): Promise<IN
 		body.emails = body.emails.split(',').map((e: string) => e.trim());
 	}
 
-	const responseData = await easybillApiRequest.call(this, 'PUT', `/customers/${customerId}/contacts/${id}`, body);
+	const responseData = await easybillApiRequest.call(this, 'PUT', `/customers/${customerId}/contacts/${id}`, { body });
 	return this.helpers.returnJsonArray(responseData);
 }
 
