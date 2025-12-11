@@ -13,8 +13,6 @@ import {
 	JsonObject,
 } from 'n8n-workflow';
 
-import { Buffer } from 'buffer';
-
 export type EasybillThis =
 	| IExecuteFunctions
 	| ILoadOptionsFunctions
@@ -146,6 +144,7 @@ async function requestCore(
 	}
 
 	if (type === 'basic') {
+		// @ts-ignore
 		const token = Buffer.from(`${creds.email}:${creds.apiKey}`).toString('base64');
 		baseHeaders.Authorization = `Basic ${token}`;
 	}
@@ -192,9 +191,7 @@ async function requestCore(
 	try {
 		const httpRequest = (this as any).helpers.httpRequest;
 		return await httpRequest.call(this, options);
-
 	} catch (error: any) {
-
 		// ----------------------
 		// DEBUG LOGGING
 		// ----------------------
@@ -205,11 +202,7 @@ async function requestCore(
 		this.logger.error('REQUEST BODY: ' + JSON.stringify(body || {}));
 		this.logger.error('REQUEST QS: ' + JSON.stringify(qs || {}));
 
-		const raw =
-			error.response?.data ??
-			error.response?.body ??
-			error.message ??
-			error;
+		const raw = error.response?.data ?? error.response?.body ?? error.message ?? error;
 
 		this.logger.error('RAW ERROR: ' + JSON.stringify(raw));
 		this.logger.error('--------------------------------');
@@ -219,7 +212,6 @@ async function requestCore(
 		});
 	}
 }
-
 
 export function easybillApiRequest(
 	this: EasybillThis,

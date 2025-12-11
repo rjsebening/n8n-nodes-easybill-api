@@ -186,7 +186,7 @@ export const documentFields: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'PDF (Only ZUGFeRD / embedded PDF supported)',
+				name: 'PDF (Only ZUGFeRD / Embedded PDF Supported)',
 				value: 'application/pdf',
 				description: 'Only works for invoices with embedded ZUGFeRD PDF payload',
 			},
@@ -207,8 +207,7 @@ export const documentFields: INodeProperties[] = [
 			},
 		],
 		default: 'application/json',
-		description:
-			'Defines the MIME type for the download endpoint. Only some formats are supported by Easybill.',
+		description: 'Defines the MIME type for the download endpoint. Only some formats are supported by Easybill.',
 	},
 
 	// Create/Update
@@ -308,6 +307,7 @@ export const documentFields: INodeProperties[] = [
 		},
 		description: 'Additional fields for the document',
 		options: [
+			// A
 			{
 				displayName: 'Anonymize Due Date',
 				name: 'anonymize_due_date',
@@ -327,11 +327,12 @@ export const documentFields: INodeProperties[] = [
 				name: 'buyer_reference',
 				type: 'string',
 				default: '',
+				description: 'Buyer reference (ZUGFeRD/XRechnung Leitweg-ID)',
 			},
 
-			/* Calc Vat From */
+			// C
 			{
-				displayName: 'Calc Vat From',
+				displayName: 'Calc VAT From',
 				name: 'calc_vat_from',
 				type: 'options',
 				options: [
@@ -339,28 +340,20 @@ export const documentFields: INodeProperties[] = [
 					{ name: 'Net', value: 0 },
 				],
 				default: 0,
-				description: 'Calculation base for VAT',
-			},
-
-			{
-				displayName: 'Cancel ID',
-				name: 'cancel_id',
-				type: 'number',
-				default: 0,
-				description: 'ID of the document to cancel',
+				description: 'Calculation basis for VAT',
 			},
 			{
 				displayName: 'Cash Allowance',
 				name: 'cash_allowance',
 				type: 'number',
-				default: 0,
+				default: '',
 				description: 'Cash allowance percentage',
 			},
 			{
 				displayName: 'Cash Allowance Days',
 				name: 'cash_allowance_days',
 				type: 'number',
-				default: 0,
+				default: '',
 				description: 'Days for cash allowance',
 			},
 			{
@@ -375,135 +368,108 @@ export const documentFields: INodeProperties[] = [
 				name: 'contact_label',
 				type: 'string',
 				default: '',
-				description: 'Label for the contact',
+				description: 'Label for contact on the document',
 			},
-
-			/* Contact Name or ID */
 			{
 				displayName: 'Contact Name or ID',
 				name: 'contact_id',
 				type: 'options',
-				description:
-					'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
 				default: '',
-				typeOptions: {
-					loadOptionsMethod: 'loadContactOptions',
-				},
+				typeOptions: { loadOptionsMethod: 'loadContactOptions' },
+				description:
+					'Internal Easybill contact ID. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 			},
-
 			{
 				displayName: 'Contact Text',
 				name: 'contact_text',
 				type: 'string',
 				default: '',
-				description: 'Text for the contact',
+				description: 'Free text related to the contact',
 			},
-
-			/* Currency */
 			{
 				displayName: 'Currency',
 				name: 'currency',
 				type: 'string',
 				default: 'EUR',
-				description: 'The currency code',
+				description: 'Document currency code',
 			},
 
-			/* Discount */
+			// D
 			{
 				displayName: 'Discount',
 				name: 'discount',
 				type: 'string',
 				default: '',
-				description: 'The discount value',
+				description: 'Discount value',
 			},
-
-			/* Discount Type */
 			{
 				displayName: 'Discount Type',
 				name: 'discount_type',
 				type: 'options',
 				options: [
 					{ name: 'Percent', value: 'PERCENT' },
-					{
-						displayName: 'Document Date',
-						name: 'document_date',
-						type: 'string',
-						default: '',
-						description: 'The date of the document (YYYY-MM-DD)',
-					},
-					{
-						displayName: 'Project Name or ID',
-						name: 'project_id',
-						type: 'options',
-						description:
-							'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
-						default: '',
-						typeOptions: { loadOptionsMethod: 'loadProjectOptions' },
-					},
-					{
-						displayName: 'Text',
-						name: 'text',
-						type: 'string',
-						default: '',
-						description: 'The main text of the document',
-					},
-					{
-						displayName: 'Title',
-						name: 'title',
-						type: 'string',
-						default: '',
-						description: 'The title of the document',
-					},
+					{ name: 'Amount', value: 'AMOUNT' },
 				],
 				default: 'PERCENT',
-				description: 'The type of the discount',
+				description: 'Type of the discount',
 			},
-
+			{
+				displayName: 'Document Date',
+				name: 'document_date',
+				type: 'dateTime',
+				default: '',
+				description: 'Date of the document',
+			},
 			{
 				displayName: 'Due In Days',
 				name: 'due_in_days',
 				type: 'number',
-				default: 0,
-				description: 'Due date in days',
+				default: '',
+				description: 'Due date offset in days',
 			},
 
-			/* File Format Config */
+			// E
+			{
+				displayName: 'External ID',
+				name: 'external_id',
+				type: 'string',
+				default: '',
+				description: 'Your external reference ID',
+			},
+
+			// F
 			{
 				displayName: 'File Format Config',
 				name: 'file_format_config',
 				type: 'json',
-				default: '[]',
-				description: 'Configuration for file formats',
+				default: `[{ "type": "default" }]`,
+				description: 'File format configuration for exports',
 			},
-
-			/* Fulfillment Country */
 			{
 				displayName: 'Fulfillment Country',
 				name: 'fulfillment_country',
 				type: 'string',
 				default: '',
-				description: 'Country for fulfillment',
+				description: 'Country of fulfillment',
 			},
 
-			/* Grace Period */
+			// G
 			{
 				displayName: 'Grace Period',
 				name: 'grace_period',
 				type: 'number',
-				default: 0,
-				description: 'Grace period in days',
+				default: '',
+				description: 'Grace period (alias of due_in_days)',
 			},
 
-			/* Is Acceptable On Public Domain */
+			// I
 			{
 				displayName: 'Is Acceptable On Public Domain',
 				name: 'is_acceptable_on_public_domain',
 				type: 'boolean',
 				default: false,
-				description: 'Whether the document can be accepted publicly',
+				description: 'Whether document can be accepted by customer via public page',
 			},
-
-			/* Is Archive */
 			{
 				displayName: 'Is Archive',
 				name: 'is_archive',
@@ -511,26 +477,22 @@ export const documentFields: INodeProperties[] = [
 				default: false,
 				description: 'Whether the document is archived',
 			},
-
-			/* Is OSS */
 			{
 				displayName: 'Is OSS',
 				name: 'is_oss',
 				type: 'boolean',
 				default: false,
-				description: 'Whether the document is One-Stop-Shop',
+				description: 'Whether the document should be marked as a One-Stop-Shop (OSS)',
 			},
-
-			/* Is Replica */
 			{
 				displayName: 'Is Replica',
 				name: 'is_replica',
 				type: 'boolean',
 				default: false,
-				description: 'Whether the document is a replica',
+				description: 'Whether the document should be marked as a replica',
 			},
 
-			/* Login Name or ID */
+			// L
 			{
 				displayName: 'Login Name or ID',
 				name: 'login_id',
@@ -538,19 +500,28 @@ export const documentFields: INodeProperties[] = [
 				default: '',
 				typeOptions: { loadOptionsMethod: 'loadLoginOptions' },
 				description:
-					'ID of the login. Choose from the list, or specify an ID using an expression. Choose from the list, or specify an ID using an expression. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+					'Login ID (admin/employee). Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 			},
 
-			/* Number */
+			// N
 			{
 				displayName: 'Number',
 				name: 'number',
 				type: 'string',
 				default: '',
-				description: 'Document number',
+				description: 'Document number (leave empty for auto-generation)',
 			},
 
-			/* PDF Template */
+			// O
+			{
+				displayName: 'Order Number',
+				name: 'order_number',
+				type: 'string',
+				default: '',
+				description: 'Optional order reference',
+			},
+
+			// P
 			{
 				displayName: 'PDF Template Name or ID',
 				name: 'pdf_template',
@@ -561,46 +532,58 @@ export const documentFields: INodeProperties[] = [
 					loadOptionsDependsOn: ['type'],
 				},
 				description:
-					'ID of the PDF template. Choose from the list, or specify an ID using an expression. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+					'ID or name of the PDF template. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+			},
+			{
+				displayName: 'Project Name or ID',
+				name: 'project_id',
+				type: 'options',
+				default: '',
+				typeOptions: { loadOptionsMethod: 'loadProjectOptions' },
+				description:
+					'Project ID tied to this document. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 			},
 
-			/* Recurring Options */
+			// R
 			{
 				displayName: 'Recurring Options',
 				name: 'recurring_options',
 				type: 'json',
-				default: '{}',
-				description: 'Options for recurring documents',
+				default: `{
+				"next_date": "2025-01-01",
+				"frequency": "MONTHLY",
+				"interval": 1,
+				"status": "WAITING",
+				"target_type": "INVOICE"
+			}`,
+				description: 'Recurring document settings',
 			},
-
-			/* Ref ID */
 			{
 				displayName: 'Ref ID',
 				name: 'ref_id',
 				type: 'number',
-				default: 0,
-				description: 'Reference ID',
+				default: '',
+				description: 'Reference to another document',
 			},
-
-			/* Replica URL */
 			{
 				displayName: 'Replica URL',
 				name: 'replica_url',
 				type: 'string',
 				default: '',
-				description: 'URL of the replica',
+				description: 'URL for replica documents',
 			},
 
-			/* Service Date */
+			// S
 			{
 				displayName: 'Service Date',
 				name: 'service_date',
 				type: 'json',
-				default: '{}',
-				description: 'Service date information',
+				default: `{
+				"type": "DEFAULT",
+				"date": null
+			}`,
+				description: 'Service or delivery date information',
 			},
-
-			/* Shipping Country */
 			{
 				displayName: 'Shipping Country',
 				name: 'shipping_country',
@@ -608,8 +591,6 @@ export const documentFields: INodeProperties[] = [
 				default: '',
 				description: 'Shipping country code',
 			},
-
-			/* Status */
 			{
 				displayName: 'Status',
 				name: 'status',
@@ -621,28 +602,47 @@ export const documentFields: INodeProperties[] = [
 					{ name: 'Dropshipping', value: 'DROPSHIPPING' },
 				],
 				default: 'ACCEPT',
-				description: 'Status of the document',
+				description: 'Document status (only for OFFER/ORDER/DELIVERY/CHARGE)',
 			},
-
-			/* Text Tax */
+			{
+				displayName: 'Text',
+				name: 'text',
+				type: 'string',
+				default: '',
+				description: 'Main text for the document',
+			},
+			{
+				displayName: 'Text Prefix',
+				name: 'text_prefix',
+				type: 'string',
+				default: '',
+				description: 'Introductory text before items',
+			},
 			{
 				displayName: 'Text Tax',
 				name: 'text_tax',
 				type: 'string',
 				default: '',
-				description: 'Tax text',
+				description: 'Tax text override',
+			},
+			{
+				displayName: 'Title',
+				name: 'title',
+				type: 'string',
+				default: '',
+				description: 'Document title (NOT the number)',
 			},
 
-			/* Use Shipping Address */
+			// U
 			{
 				displayName: 'Use Shipping Address',
 				name: 'use_shipping_address',
 				type: 'boolean',
 				default: false,
-				description: 'Whether to use shipping address',
+				description: 'Whether to use the customer shipping address',
 			},
 
-			/* VAT Country */
+			// V
 			{
 				displayName: 'VAT Country',
 				name: 'vat_country',
@@ -650,8 +650,6 @@ export const documentFields: INodeProperties[] = [
 				default: '',
 				description: 'VAT country code',
 			},
-
-			/* VAT Option */
 			{
 				displayName: 'VAT Option',
 				name: 'vat_option',
@@ -669,6 +667,7 @@ export const documentFields: INodeProperties[] = [
 					{ name: 'sStfr', value: 'sStfr' },
 				],
 				default: 'NULL',
+				description: 'Select the VAT option',
 			},
 		],
 	},
