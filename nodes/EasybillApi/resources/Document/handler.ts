@@ -45,22 +45,51 @@ function getItemsJson(param: any): any[] | null {
 }
 
 // -----------------------------------------------------------
+// Helper: normalize JSON fields in additionalFields
+// Parses stringified JSON objects/arrays into real JS values
+// -----------------------------------------------------------
+function normalizeJsonFields(
+	executeFunctions: IExecuteFunctions,
+	fields: Record<string, any>,
+	context = 'additionalFields',
+) {
+	for (const [key, value] of Object.entries(fields)) {
+		if (typeof value !== 'string') continue;
+
+		const trimmed = value.trim();
+
+		const looksLikeJson =
+			(trimmed.startsWith('{') && trimmed.endsWith('}')) || (trimmed.startsWith('[') && trimmed.endsWith(']'));
+
+		if (!looksLikeJson) continue;
+
+		try {
+			fields[key] = JSON.parse(trimmed);
+		} catch {
+			throw new NodeApiError(executeFunctions.getNode(), {
+				message: `Invalid JSON in "${context}.${key}". Expected valid JSON.`,
+			});
+		}
+	}
+}
+
+// -----------------------------------------------------------
 // CREATE DOCUMENT
 // -----------------------------------------------------------
 export async function create(this: IExecuteFunctions, index: number): Promise<INodeExecutionData[]> {
 	const customerId = this.getNodeParameter('customerId', index) as string;
 	const type = this.getNodeParameter('type', index) as string;
 
-	// Items JSON (primary input)
 	const itemsParam = this.getNodeParameter('itemsJson', index, null);
 	const itemsJson = getItemsJson(itemsParam);
 
-	// Clean additional fields
-	const additionalFieldsRaw = this.getNodeParameter('additionalFields', index, {}) as any;
+	const additionalFieldsRaw = this.getNodeParameter('additionalFields', index, {}) as Record<string, any>;
 
 	const additionalFields = safeClone(additionalFieldsRaw);
 
-	// Build request body
+	// normalize JSON fields
+	normalizeJsonFields(this, additionalFields);
+
 	const body: any = {
 		customer_id: customerId,
 		type,
@@ -85,15 +114,17 @@ export async function update(this: IExecuteFunctions, index: number): Promise<IN
 	const itemsParam = this.getNodeParameter('itemsJson', index, null);
 	const itemsJson = getItemsJson(itemsParam);
 
-	const additionalFieldsRaw = this.getNodeParameter('additionalFields', index, {}) as any;
+	const additionalFieldsRaw = this.getNodeParameter('additionalFields', index, {}) as Record<string, any>;
 
 	const additionalFields = safeClone(additionalFieldsRaw);
+
+	// normalize JSON fields
+	normalizeJsonFields(this, additionalFields);
 
 	const body: any = {
 		...additionalFields,
 	};
 
-	// Important: update REPLACES all items in Easybill
 	if (itemsJson) {
 		body.items = itemsJson;
 	}
@@ -159,8 +190,14 @@ export async function send(this: IExecuteFunctions, index: number): Promise<INod
 // -----------------------------------------------------------
 export async function done(this: IExecuteFunctions, index: number): Promise<INodeExecutionData[]> {
 	const id = this.getNodeParameter('id', index) as number;
+	const reasonForChange = this.getNodeParameter('reason_for_change', index, '') as string;
 
-	const responseData = await easybillApiRequest.call(this, 'PUT', `/documents/${id}/done`);
+	const qs: Record<string, string> = {};
+	if (reasonForChange) {
+		qs.reason_for_change = reasonForChange;
+	}
+
+	const responseData = await easybillApiRequest.call(this, 'PUT', `/documents/${id}/done`, { qs });
 
 	return this.helpers.returnJsonArray(responseData);
 }
@@ -181,9 +218,16 @@ export async function cancel(this: IExecuteFunctions, index: number): Promise<IN
 // -----------------------------------------------------------
 export async function convert(this: IExecuteFunctions, index: number): Promise<INodeExecutionData[]> {
 	const id = this.getNodeParameter('id', index) as number;
-	const targetType = this.getNodeParameter('targetType', index) as string;
+	const type = this.getNodeParameter('type', index) as string;
 
-	const responseData = await easybillApiRequest.call(this, 'POST', `/documents/${id}/${targetType}`);
+	const pdfTemplate = this.getNodeParameter('pdf_template', index, '') as string;
+
+	const qs: Record<string, string> = {};
+	if (pdfTemplate) {
+		qs.pdf_template = pdfTemplate;
+	}
+
+	const responseData = await easybillApiRequest.call(this, 'POST', `/documents/${id}/${type}`, { qs });
 
 	return this.helpers.returnJsonArray(responseData);
 }
