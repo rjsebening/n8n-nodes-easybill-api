@@ -1,20 +1,40 @@
 import { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
 import { easybillApiRequest } from '../../transport/request';
 
+function cleanObject(obj: Record<string, any>) {
+	return Object.fromEntries(
+		Object.entries(obj).filter(
+			([_, value]) => value !== undefined && value !== null && !(typeof value === 'string' && value.trim() === ''),
+		),
+	);
+}
+
 export async function create(this: IExecuteFunctions, index: number): Promise<INodeExecutionData[]> {
 	const lastName = this.getNodeParameter('lastName', index) as string;
 	const companyName = this.getNodeParameter('companyName', index) as string;
 	const additionalFields = this.getNodeParameter('additionalFields', index) as any;
 
-	const body = {
+	let body: Record<string, any> = {
 		last_name: lastName,
 		company_name: companyName,
 		...additionalFields,
 	};
 
-	if (body.emails && typeof body.emails === 'string') {
-		body.emails = body.emails.split(',').map((e: string) => e.trim());
+	if (typeof body.emails === 'string') {
+		body.emails = body.emails
+			.split(',')
+			.map((e: string) => e.trim())
+			.filter(Boolean);
 	}
+
+	if (typeof body.additional_groups_ids === 'string') {
+		body.additional_groups_ids = body.additional_groups_ids
+			.split(',')
+			.map((id: string) => Number(id.trim()))
+			.filter((id: number) => !isNaN(id));
+	}
+
+	body = cleanObject(body);
 
 	const responseData = await easybillApiRequest.call(this, 'POST', '/customers', { body });
 	return this.helpers.returnJsonArray(responseData);
@@ -26,15 +46,27 @@ export async function update(this: IExecuteFunctions, index: number): Promise<IN
 	const companyName = this.getNodeParameter('companyName', index) as string;
 	const additionalFields = this.getNodeParameter('additionalFields', index) as any;
 
-	const body = {
+	let body: Record<string, any> = {
 		last_name: lastName,
 		company_name: companyName,
 		...additionalFields,
 	};
 
-	if (body.emails && typeof body.emails === 'string') {
-		body.emails = body.emails.split(',').map((e: string) => e.trim());
+	if (typeof body.emails === 'string') {
+		body.emails = body.emails
+			.split(',')
+			.map((e: string) => e.trim())
+			.filter(Boolean);
 	}
+
+	if (typeof body.additional_groups_ids === 'string') {
+		body.additional_groups_ids = body.additional_groups_ids
+			.split(',')
+			.map((id: string) => Number(id.trim()))
+			.filter((id: number) => !isNaN(id));
+	}
+
+	body = cleanObject(body);
 
 	const responseData = await easybillApiRequest.call(this, 'PUT', `/customers/${id}`, { body });
 	return this.helpers.returnJsonArray(responseData);
