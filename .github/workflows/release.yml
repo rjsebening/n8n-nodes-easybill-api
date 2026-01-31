@@ -7,7 +7,7 @@ on:
 
 permissions:
   contents: read
-  id-token: write
+  id-token: write   # 🔑 Pflicht für Trusted Publisher (OIDC)
 
 jobs:
   publish:
@@ -17,20 +17,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Remove all npm auth (hard reset)
+      # 🔥 ALLE npm Auth-Reste entfernen
+      - name: Remove npm auth
         run: |
           rm -f ~/.npmrc
           npm config delete //registry.npmjs.org/:_authToken || true
-          npm config set always-auth false
 
-      - name: Setup Node.js (OIDC only)
+      - name: Setup Node.js (OIDC)
         uses: actions/setup-node@v4
         with:
           node-version: 20
           registry-url: https://registry.npmjs.org
 
-      - name: Verify auth state
-        run: npm whoami || echo "OIDC mode – not logged in"
+      - name: Verify auth (expected to fail – OIDC mode)
+        run: npm whoami || echo "OIDC active – no npm login"
 
       - name: Install dependencies
         run: npm install
@@ -38,10 +38,10 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Publish scoped package
+      - name: Publish scoped
         working-directory: packages/scoped
         run: npm publish --provenance --access public
 
-      - name: Publish unscoped package
+      - name: Publish unscoped
         working-directory: packages/unscoped
         run: npm publish --provenance --access public
