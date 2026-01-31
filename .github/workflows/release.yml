@@ -24,10 +24,10 @@ jobs:
       - run: npm install
       - run: npm run build
 
-      - name: Publish unscoped
-        working-directory: packages/unscoped
-        run: npm publish --provenance --access public
-
       - name: Publish scoped
         working-directory: packages/scoped
+        run: npm publish --provenance --access public
+
+      - name: Publish unscoped
+        working-directory: packages/unscoped
         run: npm publish --provenance --access public
