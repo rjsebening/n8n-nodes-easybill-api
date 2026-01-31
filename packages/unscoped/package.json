@@ -1,0 +1,51 @@
+{
+  "name": "n8n-nodes-easybill-api",
+  "version": "0.1.5",
+  "description": "n8n node for the Easybill REST API, allowing management of documents, customers, positions, and more.",
+  "type": "commonjs",
+  "keywords": [
+    "n8n-community-node-package",
+    "easybill"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/rjsebening/n8n-nodes-easybill-api",
+  "author": {
+    "name": "Jörg Sebening",
+    "email": "dev@joerg-sebening.com"
+  },
+  "bugs": {
+    "url": "https://github.com/rjsebening/n8n-nodes-easybill-api/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rjsebening/n8n-nodes-easybill-api.git"
+  },
+  "engines": {
+    "node": ">=20.15"
+  },
+  "main": "dist/index.js",
+  "files": [
+    "dist",
+    "!dist/**/*.map",
+    "!dist/tsconfig.tsbuildinfo",
+    "README.md",
+    "LICENSE.md"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "nodes": [
+      "dist/nodes/EasybillApi/EasybillApi.node.js",
+      "dist/nodes/EasybillApi/EasybillApiTrigger.node.js"
+    ],
+    "credentials": [
+      "dist/credentials/EasybillApiBasicApi.credentials.js",
+      "dist/credentials/EasybillApiBearerApi.credentials.js"
+    ]
+  },
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

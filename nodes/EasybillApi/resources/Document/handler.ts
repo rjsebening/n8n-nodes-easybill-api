@@ -129,7 +129,24 @@ export async function update(this: IExecuteFunctions, index: number): Promise<IN
 		body.items = itemsJson;
 	}
 
-	const responseData = await easybillApiRequest.call(this, 'PUT', `/documents/${id}`, { body });
+	const refreshCustomerData = this.getNodeParameter('refreshCustomerData', index, false) as boolean;
+
+	const reasonForChange = this.getNodeParameter('reasonForChange', index, '') as string;
+
+	const qs: Record<string, any> = {};
+
+	if (refreshCustomerData === true) {
+		qs.refresh_customer_data = true;
+	}
+
+	if (reasonForChange && reasonForChange.length >= 1) {
+		qs.reason_for_change = reasonForChange;
+	}
+
+	const responseData = await easybillApiRequest.call(this, 'PUT', `/documents/${id}`, {
+		body,
+		qs,
+	});
 
 	return this.helpers.returnJsonArray(responseData);
 }
@@ -190,11 +207,11 @@ export async function send(this: IExecuteFunctions, index: number): Promise<INod
 // -----------------------------------------------------------
 export async function done(this: IExecuteFunctions, index: number): Promise<INodeExecutionData[]> {
 	const id = this.getNodeParameter('id', index) as number;
-	const reasonForChange = this.getNodeParameter('reason_for_change', index, '') as string;
+	const reasonForChange = this.getNodeParameter('reasonForChange', index, '') as string;
 
 	const qs: Record<string, string> = {};
 	if (reasonForChange) {
-		qs.reason_for_change = reasonForChange;
+		qs.reasonForChange = reasonForChange;
 	}
 
 	const responseData = await easybillApiRequest.call(this, 'PUT', `/documents/${id}/done`, { qs });

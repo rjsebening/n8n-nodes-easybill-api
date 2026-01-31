@@ -360,6 +360,33 @@ export const documentFields: INodeProperties[] = [
 		},
 	},
 	{
+		displayName: 'Refresh Customer Data',
+		name: 'refreshCustomerData',
+		type: 'boolean',
+		default: false,
+		description: 'Whether the customer data should be refreshed',
+		displayOptions: {
+			show: {
+				resource: ['document'],
+				operation: ['update'],
+			},
+		},
+	},
+	{
+		displayName: 'Reason for Change',
+		name: 'reasonForChange',
+		type: 'string',
+		default: '',
+		description:
+			'Reason that is saved on the document version. Only applies when updating an already finalized document.',
+		displayOptions: {
+			show: {
+				resource: ['document'],
+				operation: ['update'],
+			},
+		},
+	},
+	{
 		displayName: 'Additional Fields',
 		name: 'additionalFields',
 		type: 'collection',
@@ -818,7 +845,7 @@ export const documentFields: INodeProperties[] = [
 	},
 	{
 		displayName: 'Reason for Change',
-		name: 'reason_for_change',
+		name: 'reasonForChange',
 		type: 'string',
 		displayOptions: {
 			show: {
