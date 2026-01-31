@@ -14,17 +14,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Remove all npm auth (hard reset)
+        run: |
+          rm -f ~/.npmrc
+          npm config delete //registry.npmjs.org/:_authToken || true
+          npm config set always-auth false
+
+      - name: Setup Node.js (OIDC only)
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           registry-url: https://registry.npmjs.org
 
-      - name: Publish scoped
+      - name: Verify auth state
+        run: npm whoami || echo "OIDC mode – not logged in"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: Publish scoped package
         working-directory: packages/scoped
         run: npm publish --provenance --access public
 
-      - name: Publish unscoped
+      - name: Publish unscoped package
         working-directory: packages/unscoped
         run: npm publish --provenance --access public
