@@ -26,8 +26,12 @@ jobs:
 
       - name: Publish scoped
         working-directory: packages/scoped
+        env:
+          NPM_CONFIG_USERCONFIG: /dev/null
         run: npm publish --provenance --access public
 
       - name: Publish unscoped
         working-directory: packages/unscoped
+        env:
+          NPM_CONFIG_USERCONFIG: /dev/null
         run: npm publish --provenance --access public
