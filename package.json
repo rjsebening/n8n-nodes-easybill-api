@@ -15,7 +15,8 @@
     "dev": "tsc --watch",
     "format": "prettier nodes credentials --write",
     "lint": "eslint nodes credentials --ext .ts",
-    "lint:fix": "eslint nodes credentials --ext .ts --fix"
+    "lint:fix": "eslint nodes credentials --ext .ts --fix",
+    "check:versions": "node -e \"const a=require('./packages/scoped/package.json').version; const b=require('./packages/unscoped/package.json').version; if(a!==b){console.error('Version mismatch:',a,b); process.exit(1)} else {console.log('Versions OK:',a)}\""
   },
   "devDependencies": {
     "@typescript-eslint/parser": "~8.32.0",
