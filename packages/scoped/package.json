@@ -1,6 +1,6 @@
 {
   "name": "@rjsebening/n8n-nodes-easybill-api",
-  "version": "0.1.11",
+  "version": "0.1.15",
   "description": "n8n node for the Easybill REST API, allowing management of documents, customers, positions, and more.",
   "type": "commonjs",
   "keywords": [
