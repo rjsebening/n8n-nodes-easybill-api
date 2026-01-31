@@ -9,7 +9,7 @@
     "node": ">=20.15"
   },
   "scripts": {
-    "build": "npx rimraf dist && tsc --incremental false && gulp build:icons && npm run clean:dist && npm run copy:dist",
+    "build": "npx rimraf dist && tsc && gulp build:icons && rm -f dist/package.json && npm run copy:dist",
     "clean:dist": "rm -f dist/tsconfig.tsbuildinfo",
     "copy:dist": "cp -r dist packages/unscoped/ && cp -r dist packages/scoped/ && cp README.md LICENSE.md packages/unscoped/ && cp README.md LICENSE.md packages/scoped/",
     "dev": "tsc --watch",

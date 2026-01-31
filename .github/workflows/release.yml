@@ -26,8 +26,8 @@ jobs:
 
       - name: Publish unscoped
         working-directory: packages/unscoped
-        run: npm publish --access public
+        run: npm publish --provenance --access public
 
       - name: Publish scoped
         working-directory: packages/scoped
-        run: npm publish --access public
+        run: npm publish --provenance --access public
