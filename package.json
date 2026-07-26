@@ -1,22 +1,59 @@
 {
-  "name": "n8n-nodes-easybill-api-root",
-  "private": true,
+  "name": "n8n-nodes-easybill-api",
+  "version": "0.2.0",
+  "description": "n8n node for the Easybill REST API, allowing management of documents, customers, positions, and more.",
   "type": "commonjs",
-  "workspaces": [
-    "packages/*"
+  "keywords": [
+    "n8n-community-node-package",
+    "easybill"
   ],
+  "license": "MIT",
+  "homepage": "https://github.com/rjsebening/n8n-nodes-easybill-api",
+  "author": {
+    "name": "Jörg Sebening",
+    "email": "dev@joerg-sebening.com"
+  },
+  "bugs": {
+    "url": "https://github.com/rjsebening/n8n-nodes-easybill-api/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rjsebening/n8n-nodes-easybill-api.git"
+  },
   "engines": {
     "node": ">=20.15"
   },
   "scripts": {
-    "build": "npx rimraf dist && tsc && gulp build:icons && rm -f dist/package.json && npm run copy:dist",
+    "build": "npx rimraf dist && tsc && gulp build:icons",
     "clean:dist": "rm -f dist/tsconfig.tsbuildinfo",
-    "copy:dist": "cp -r dist packages/unscoped/ && cp -r dist packages/scoped/ && cp README.md LICENSE.md packages/unscoped/ && cp README.md LICENSE.md packages/scoped/",
     "dev": "tsc --watch",
     "format": "prettier nodes credentials --write",
     "lint": "eslint nodes credentials --ext .ts",
-    "lint:fix": "eslint nodes credentials --ext .ts --fix",
-    "check:versions": "node -e \"const a=require('./packages/scoped/package.json').version; const b=require('./packages/unscoped/package.json').version; if(a!==b){console.error('Version mismatch:',a,b); process.exit(1)} else {console.log('Versions OK:',a)}\""
+    "lint:fix": "eslint nodes credentials --ext .ts --fix"
+  },
+  "files": [
+    "dist",
+    "!dist/**/*.map",
+    "!dist/tsconfig.tsbuildinfo",
+    "README.md",
+    "LICENSE.md"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "nodes": [
+      "dist/nodes/EasybillApi/EasybillApi.node.js",
+      "dist/nodes/EasybillApi/EasybillApiTrigger.node.js"
+    ],
+    "credentials": [
+      "dist/credentials/EasybillApiBasicApi.credentials.js",
+      "dist/credentials/EasybillApiBearerApi.credentials.js"
+    ]
+  },
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "devDependencies": {
     "@typescript-eslint/parser": "~8.32.0",
@@ -24,7 +61,7 @@
     "eslint-plugin-n8n-nodes-base": "^1.16.3",
     "gulp": "^5.0.0",
     "prettier": "^3.7.4",
-    "typescript": "^5.8.2",
-    "rimraf": "^5.0.0"
+    "rimraf": "^5.0.0",
+    "typescript": "^5.8.2"
   }
 }

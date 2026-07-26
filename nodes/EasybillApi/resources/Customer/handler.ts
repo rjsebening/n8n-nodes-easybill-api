@@ -94,3 +94,9 @@ export async function del(this: IExecuteFunctions, index: number): Promise<INode
 	await easybillApiRequest.call(this, 'DELETE', `/customers/${id}`);
 	return this.helpers.returnJsonArray({ success: true });
 }
+
+export async function transferSepaMandate(this: IExecuteFunctions, index: number): Promise<INodeExecutionData[]> {
+	const id = this.getNodeParameter('id', index) as number;
+	const responseData = await easybillApiRequest.call(this, 'POST', `/customers/${id}/sepa-mandate/transfer`);
+	return this.helpers.returnJsonArray(responseData);
+}

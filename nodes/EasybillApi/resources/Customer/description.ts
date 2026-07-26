@@ -16,6 +16,12 @@ export const customerOperations: INodeProperties[] = [
 			{ name: 'Delete', value: 'delete', action: 'Delete a customer', description: 'Delete a customer by ID' },
 			{ name: 'Get', value: 'get', action: 'Get a customer', description: 'Get a customer by ID' },
 			{ name: 'Get Many', value: 'getAll', action: 'Get many customers', description: 'Get a list of customers' },
+			{
+				name: 'Transfer SEPA Mandate',
+				value: 'transferSepaMandate',
+				action: 'Transfer a customer sepa mandate',
+				description: "Transfer the customer's stored SEPA mandate to the connected payment provider",
+			},
 			{ name: 'Update', value: 'update', action: 'Update a customer', description: 'Update a customer by ID' },
 		],
 		default: 'getAll',
@@ -31,7 +37,7 @@ export const customerFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: ['customer'],
-				operation: ['get', 'delete', 'update'],
+				operation: ['get', 'delete', 'update', 'transferSepaMandate'],
 			},
 		},
 		default: '',
@@ -349,6 +355,10 @@ export const customerFields: INodeProperties[] = [
 					{ name: 'XRechnung 3.0', value: 'xrechnung3_0_xml' },
 					{ name: 'ZUGFeRD 1', value: 'zugferd1' },
 					{ name: 'ZUGFeRD 2.2', value: 'zugferd2_2' },
+					{ name: 'ZUGFeRD 2.4 EN16931', value: 'zugferd2_4_en16931' },
+					{ name: 'ZUGFeRD 2.4 Extended', value: 'zugferd2_4_extended' },
+					{ name: 'ZUGFeRD 2.5 EN16931', value: 'zugferd2_5_en16931' },
+					{ name: 'ZUGFeRD 2.5 Extended', value: 'zugferd2_5_extended' },
 				],
 			},
 			{

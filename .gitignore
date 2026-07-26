@@ -1,13 +1,12 @@
 # Build outputs
 dist/
-packages/*/dist/
 *.tsbuildinfo
 
 # Dependencies
 node_modules/
 
-# Package manager lock files (wähle eines basierend auf deinem Package Manager)
-package-lock.json
+# Package manager lock files
+# package-lock.json should stay committed because the publish workflow uses npm ci.
 # yarn.lock
 # pnpm-lock.yaml
 
@@ -22,6 +21,7 @@ package-lock.json
 *.swp
 *.swo
 *~
+*.tgz
 
 # OS generated files
 .DS_Store

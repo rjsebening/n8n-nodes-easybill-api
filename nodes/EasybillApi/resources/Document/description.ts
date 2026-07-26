@@ -126,12 +126,15 @@ export const documentFields: INodeProperties[] = [
 				options: [
 					{ name: 'Default', value: 'default' },
 					{ name: 'XRechnung (PDF)', value: 'xrechnung' },
-
 					{ name: 'XRechnung 2.2 XML', value: 'xrechnung2_2_xml' },
 					{ name: 'XRechnung 3.0 XML', value: 'xrechnung3_0_xml' },
 					{ name: 'XRechnung XML', value: 'xrechnung_xml' },
 					{ name: 'ZUGFeRD 1', value: 'zugferd1' },
 					{ name: 'ZUGFeRD 2.2', value: 'zugferd2_2' },
+					{ name: 'ZUGFeRD 2.4 EN16931', value: 'zugferd2_4_en16931' },
+					{ name: 'ZUGFeRD 2.4 Extended', value: 'zugferd2_4_extended' },
+					{ name: 'ZUGFeRD 2.5 EN16931', value: 'zugferd2_5_en16931' },
+					{ name: 'ZUGFeRD 2.5 Extended', value: 'zugferd2_5_extended' },
 				],
 			},
 			{
@@ -351,7 +354,7 @@ export const documentFields: INodeProperties[] = [
 					}
 				]`,
 		description:
-			'Provide an array of Easybill items. Example: [{ "position_id": 123, "quantity": 2 }]. This overrides all other item inputs.',
+			'Provide an array of Easybill items. Example: [{ "position_id": 123, "quantity": 2 }]. This overrides all other item inputs. Note: all price fields (single_price_net, single_price_gross, cost_price_net, total_price_net, ...) are in cents, e.g. 150 = 1.50 €.',
 		displayOptions: {
 			show: {
 				resource: ['document'],
@@ -401,6 +404,14 @@ export const documentFields: INodeProperties[] = [
 		description: 'Additional fields for the document',
 		options: [
 			// A
+			{
+				displayName: 'Advanced Data Fields',
+				name: 'advanced_data_fields',
+				type: 'json',
+				default: '[]',
+				description:
+					'EN16931 Business Terms (BT fields) as an array of {identifier, value}, e.g. [{"identifier":"BT-10","value":"Ref-123"}]. On update the submitted list fully replaces the existing fields; an empty array clears all.',
+			},
 			{
 				displayName: 'Anonymize Due Date',
 				name: 'anonymize_due_date',
@@ -615,6 +626,24 @@ export const documentFields: INodeProperties[] = [
 			},
 
 			// P
+			{
+				displayName: 'Payment Link Enabled',
+				name: 'payment_link_enabled',
+				type: 'boolean',
+				default: false,
+				description: 'Whether the payment link is shown on this document, overriding the template setting',
+			},
+			{
+				displayName: 'Payment Link Locale',
+				name: 'payment_link_locale',
+				type: 'options',
+				default: 'de',
+				description: 'Language of the payment link text on the document',
+				options: [
+					{ name: 'English', value: 'en' },
+					{ name: 'German', value: 'de' },
+				],
+			},
 			{
 				displayName: 'PDF Template Name or ID',
 				name: 'pdf_template',

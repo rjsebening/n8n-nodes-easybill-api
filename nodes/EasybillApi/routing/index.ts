@@ -28,6 +28,8 @@ export async function router(this: IExecuteFunctions): Promise<INodeExecutionDat
 	const returnData: INodeExecutionData[] = [];
 	const resource = this.getNodeParameter('resource', 0) as string;
 	const operation = this.getNodeParameter('operation', 0) as string;
+	// Handlers export `del` (reserved word), while the UI operation value is `delete`.
+	const handlerKey = operation === 'delete' ? 'del' : operation;
 
 	for (let i = 0; i < items.length; i++) {
 		try {
@@ -37,70 +39,70 @@ export async function router(this: IExecuteFunctions): Promise<INodeExecutionDat
 				responseData = await Raw.handler.custom.call(this, i);
 			} else if (resource === 'customer') {
 				// @ts-ignore
-				responseData = await Customer.handler[operation].call(this, i);
+				responseData = await Customer.handler[handlerKey].call(this, i);
 			} else if (resource === 'document') {
 				// @ts-ignore
-				responseData = await Document.handler[operation].call(this, i);
+				responseData = await Document.handler[handlerKey].call(this, i);
 			} else if (resource === 'task') {
 				// @ts-ignore
-				responseData = await Task.handler[operation].call(this, i);
+				responseData = await Task.handler[handlerKey].call(this, i);
 			} else if (resource === 'project') {
 				// @ts-ignore
-				responseData = await Project.handler[operation].call(this, i);
+				responseData = await Project.handler[handlerKey].call(this, i);
 			} else if (resource === 'position') {
 				// @ts-ignore
-				responseData = await Position.handler[operation].call(this, i);
+				responseData = await Position.handler[handlerKey].call(this, i);
 			} else if (resource === 'stock') {
 				// @ts-ignore
-				responseData = await Stock.handler[operation].call(this, i);
+				responseData = await Stock.handler[handlerKey].call(this, i);
 			} else if (resource === 'contact') {
 				// @ts-ignore
-				responseData = await Contact.handler[operation].call(this, i);
+				responseData = await Contact.handler[handlerKey].call(this, i);
 			} else if (resource === 'timeTracking') {
 				// @ts-ignore
-				responseData = await TimeTracking.handler[operation].call(this, i);
+				responseData = await TimeTracking.handler[handlerKey].call(this, i);
 			} else if (resource === 'attachment') {
 				// @ts-ignore
-				responseData = await Attachment.handler[operation].call(this, i);
+				responseData = await Attachment.handler[handlerKey].call(this, i);
 			} else if (resource === 'customerGroup') {
 				// @ts-ignore
-				responseData = await CustomerGroup.handler[operation].call(this, i);
+				responseData = await CustomerGroup.handler[handlerKey].call(this, i);
 			} else if (resource === 'discountPosition') {
 				// @ts-ignore
-				responseData = await DiscountPosition.handler[operation].call(this, i);
+				responseData = await DiscountPosition.handler[handlerKey].call(this, i);
 			} else if (resource === 'discountPositionGroup') {
 				// @ts-ignore
-				responseData = await DiscountPositionGroup.handler[operation].call(this, i);
+				responseData = await DiscountPositionGroup.handler[handlerKey].call(this, i);
 			} else if (resource === 'documentPayment') {
 				// @ts-ignore
-				responseData = await DocumentPayment.handler[operation].call(this, i);
+				responseData = await DocumentPayment.handler[handlerKey].call(this, i);
 			} else if (resource === 'documentVersion') {
 				// @ts-ignore
-				responseData = await DocumentVersion.handler[operation].call(this, i);
+				responseData = await DocumentVersion.handler[handlerKey].call(this, i);
 			} else if (resource === 'login') {
 				// @ts-ignore
-				responseData = await Login.handler[operation].call(this, i);
+				responseData = await Login.handler[handlerKey].call(this, i);
 			} else if (resource === 'pdfTemplate') {
 				// @ts-ignore
-				responseData = await PDFTemplate.handler[operation].call(this, i);
+				responseData = await PDFTemplate.handler[handlerKey].call(this, i);
 			} else if (resource === 'positionGroup') {
 				// @ts-ignore
-				responseData = await PositionGroup.handler[operation].call(this, i);
+				responseData = await PositionGroup.handler[handlerKey].call(this, i);
 			} else if (resource === 'postBox') {
 				// @ts-ignore
-				responseData = await PostBox.handler[operation].call(this, i);
+				responseData = await PostBox.handler[handlerKey].call(this, i);
 			} else if (resource === 'sepaPayment') {
 				// @ts-ignore
-				responseData = await SEPAPayment.handler[operation].call(this, i);
+				responseData = await SEPAPayment.handler[handlerKey].call(this, i);
 			} else if (resource === 'serialNumber') {
 				// @ts-ignore
-				responseData = await SerialNumber.handler[operation].call(this, i);
+				responseData = await SerialNumber.handler[handlerKey].call(this, i);
 			} else if (resource === 'textTemplate') {
 				// @ts-ignore
-				responseData = await TextTemplate.handler[operation].call(this, i);
+				responseData = await TextTemplate.handler[handlerKey].call(this, i);
 			} else if (resource === 'webHook') {
 				// @ts-ignore
-				responseData = await WebHook.handler[operation].call(this, i);
+				responseData = await WebHook.handler[handlerKey].call(this, i);
 			}
 
 			if (Array.isArray(responseData)) {

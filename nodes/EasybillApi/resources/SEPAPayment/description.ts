@@ -141,7 +141,6 @@ export const sepaPaymentFields: INodeProperties[] = [
 		displayOptions: { show: { resource: ['sepaPayment'], operation: ['create', 'update'] } },
 		description: 'Additional fields for the SEPA payment',
 		options: [
-			{ name: 'Credit', value: 'CREDIT' },
 			{
 				displayName: 'Creditor BIC',
 				name: 'creditor_bic',
@@ -162,6 +161,13 @@ export const sepaPaymentFields: INodeProperties[] = [
 				type: 'string',
 				default: '',
 				description: 'Name of the creditor',
+			},
+			{
+				displayName: 'Debitor Address Line 2',
+				name: 'debitor_address_line_2',
+				type: 'string',
+				default: '',
+				description: 'Second address line of the debitor',
 			},
 			{
 				displayName: 'Debitor BIC',

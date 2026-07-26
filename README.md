@@ -1,10 +1,24 @@
 # n8n-nodes-easybill-api
 
 ![n8n](https://img.shields.io/badge/n8n-1.113.0+-brightgreen)
-![Version](https://img.shields.io/badge/version-0.1.0-blue)
+![Version](https://img.shields.io/badge/version-0.2.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 A full-featured **n8n Community Node** for the **Easybill REST API**, allowing you to automate invoicing, customer management, documents, payments, and real-time events directly inside your n8n workflows.
+
+Targets the **Easybill API 1.99.0**.
+
+---
+
+## 🆕 What's New
+
+**API 1.99.0**
+
+* New Customer operation: **Transfer SEPA mandate** to the connected payment provider
+* Document: **Advanced Data Fields** (EN16931 Business Terms / BT fields)
+* Document: **Payment Link** options (enabled + locale)
+* New **ZUGFeRD 2.4 / 2.5** file formats (EN16931 and Extended)
+* SEPA Payment: **Debitor Address Line 2**
 
 ---
 
@@ -15,8 +29,10 @@ With this Easybill integration, you can:
 
 * Create offers, invoices, and documents automatically
 * Sync customers and contacts
+* Manage projects, tasks and time tracking
+* Handle SEPA payments, discounts, positions and stock
 * Upload and manage attachments
-* Receive Easybill events via webhook
+* Receive Easybill events via webhook — registered automatically by the trigger
 * Fetch PDFs/JPGs of documents
 * Add payments or mark documents as paid
 
@@ -33,10 +49,10 @@ All trademarks belong to their respective owners.
 
 ## 🚀 Features
 
-* **Full Easybill REST API integration**
-* **Document, Customer, Contact, Attachment & Payment operations**
-* **Webhook Trigger Node** with automatic registration/deregistration
-* **API Call resource** for unsupported or custom endpoints
+* **Complete Easybill REST API coverage** — all 104 endpoints across all 21 API areas
+* **22 resources**: documents, customers, contacts, projects, tasks, SEPA payments, discounts, positions, stock, time tracking, and more
+* **Webhook Trigger Node** that registers the webhook in Easybill for you — and removes it again automatically
+* **API Call resource** as a fallback for any future endpoint
 * **Supports both Bearer and Basic Authentication**
 * Clean TypeScript implementation following n8n best practices
 
@@ -44,70 +60,139 @@ All trademarks belong to their respective owners.
 
 ## 📋 Supported Resources & Operations
 
-### 🧾 **Document**
+**The node covers the Easybill REST API in full — every endpoint of every API area is implemented.**
+Grouped below by the API's own areas (tags), with the operation names as they appear in the n8n UI.
 
-* Create document
-* Update document
-* Delete document
-* Send document (email / fax)
-* Mark as done / cancel / convert
-* Add payment
-* Get PDF / Get JPG
-* List versions
-* Download files
+### 🧾 Document
 
-### 👤 **Customer**
+`Create` · `Get` · `Get Many` · `Update` · `Delete` · `Send` · `Finish` · `Cancel` · `Convert` · `Get PDF` · `Get JPG` · `Download`
 
-* Create customer
-* Update customer
-* Get one
-* Get all
-* Delete customer
+Send via **email, fax or post**. Convert between document types (e.g. offer → invoice). Supports **ZUGFeRD 1 / 2.2 / 2.4 / 2.5** and **XRechnung 2.1–3.0**, plus EN16931 advanced data fields (BT) and payment links.
 
-### 🧑‍💼 **Contact**
+### 📄 Document Version
 
-* Create contact
-* Update contact
-* Get all contacts
-* Delete contact
+`Get` · `Get Many` · `Download Item`
 
-### 📎 **Attachment**
+### 💸 Document Payment
 
-* Upload attachment
-* Get attachment
-* Delete attachment
+`Create` · `Get` · `Get Many` · `Delete`
 
-### 💸 **Document Payment**
+### 👤 Customer
 
-* Add payment
-* Get payment list
+`Create` · `Get` · `Get Many` · `Update` · `Delete` · `Transfer SEPA Mandate`
 
-### 🛠️ **API Call**
+`Transfer SEPA Mandate` hands the stored SEPA mandate over to the connected payment provider (e.g. Mollie).
 
-* Fully custom API requests to any Easybill endpoint
-  (`GET`, `POST`, `PUT`, `DELETE` supported)
+### 🧑‍💼 Contact
+
+`Create` · `Get` · `Get Many` · `Update` · `Delete`
+
+### 👥 Customer Group
+
+`Create` · `Get` · `Get Many` · `Update` · `Delete`
+
+### 📁 Project
+
+`Create` · `Get` · `Get Many` · `Update` · `Delete`
+
+### ✅ Task
+
+`Create` · `Get` · `Get Many` · `Update` · `Delete`
+
+### ⏱️ Time Tracking
+
+`Create` · `Get` · `Get Many` · `Update` · `Delete`
+
+### 🏦 SEPA Payment
+
+`Create` · `Get` · `Get Many` · `Update` · `Delete`
+
+Manage SEPA direct debits and credit transfers, including creditor/debitor data, mandate reference and remittance information.
+
+### 🏷️ Discount Position
+
+`Create` · `Get` · `Get Many` · `Update` · `Delete`
+
+### 🏷️ Discount Position Group
+
+`Create` · `Get` · `Get Many` · `Update` · `Delete`
+
+Manage discounts at both levels the API offers: per **position** and per **position group**.
+
+### 📦 Position
+
+`Create` · `Get` · `Get Many` · `Update` · `Delete`
+
+### 📦 Position Group
+
+`Create` · `Get` · `Get Many` · `Update` · `Delete`
+
+### 📊 Stock
+
+`Create` · `Get` · `Get Many`
+
+### 🔢 Serial Number
+
+`Create` · `Get` · `Get Many` · `Delete`
+
+### 📎 Attachment
+
+`Create` · `Get` · `Get Many` · `Update` · `Delete` · `Get Content`
+
+### 📬 Post Box
+
+`Get` · `Get Many` · `Delete`
+
+### 📝 Text Template
+
+`Create` · `Get` · `Get Many` · `Update` · `Delete`
+
+### 🖨️ PDF Template
+
+`Get Many`
+
+### 🔑 Login
+
+`Get` · `Get Many`
+
+### 🪝 WebHook
+
+`Create` · `Get` · `Get Many` · `Update` · `Delete`
+
+Manage webhooks manually — or let the **Easybill Trigger** handle it for you (see below).
+
+### 🛠️ API Call
+
+`Custom Call` — fully custom requests to any Easybill endpoint (`GET`, `POST`, `PUT`, `DELETE`), as a fallback for anything the API adds in future.
 
 ---
 
-## 🎣 Easybill Webhook Trigger
+## 🎣 Easybill Trigger — zero-config webhooks
 
-The Easybill Trigger Node gives you **real-time automations** in n8n.
+The **Easybill Trigger** node gives you real-time automations without ever touching the Easybill settings UI.
 
-Supported event types include (examples):
+### No manual webhook setup
 
-* `contact.update`
-* `contact.create`
-* `customer.update`
-* `customer.create`
-* `document.update`
-* `document.create`
-* `payment.create`
-* …and more depending on your Easybill configuration
+You pick an event, activate the workflow — that's it. The node talks to the Easybill API for you:
 
-When you activate a workflow, the webhook is:
+1. **On activation** it creates the webhook in your Easybill account, pointed at your n8n webhook URL
+2. **On deactivation** it deletes that webhook again — no orphaned entries piling up in your account
+3. A **signing secret** is generated and registered automatically, so incoming payloads can be verified
 
-1. **Automatically created in Easybill**, pointing to your n8n webhook URL
-2. **Automatically removed** when the workflow is disabled
+You never copy a URL into Easybill by hand, and you never clean up afterwards.
+
+### Supported events (19)
+
+| Area | Events |
+|---|---|
+| **Contact** | `contact.create` · `contact.update` · `contact.delete` |
+| **Customer** | `customer.create` · `customer.update` · `customer.delete` |
+| **Document** | `document.create` · `document.update` · `document.completed` · `document.deleted` |
+| **Payment** | `document.payment_add` · `document.payment_delete` |
+| **Position** | `position.create` · `position.update` · `position.delete` |
+| **Post Box** | `postbox.create` · `postbox.update` · `postbox.sent` · `postbox.delete` |
+
+> Prefer to manage webhooks yourself? The **WebHook** resource on the main node exposes full CRUD.
 
 ---
 
@@ -124,7 +209,9 @@ Sync customers from tools like:
 * Airtable
 * HubSpot
 * Pipedrive
+* Close CRM
 * Umsatz.io
+* SalesSuite.com
 * Custom CRMs
 
 …and keep Easybill always up to date.
@@ -270,7 +357,7 @@ cd n8n-nodes-easybill-api
 
 npm install
 npm run build
-npm test
+npm run lint
 ```
 
 ### Pull Request Workflow
@@ -312,8 +399,27 @@ npm test
 
 ---
 
+
+## 📬 About the Author
+
+I’m **[Rezk Jörg Sebening](https://github.com/rjsebening)** – Automation & Systems Expert (DACH).
+I build n8n nodes and process automation systems that help agencies, coaches, and service providers scale **without manual work**.
+
+👉 Follow me on GitHub for new DACH integrations and automation templates.
+
+## ⚖️ Legal Disclaimer
+
+This community node is **not affiliated with EasyBill** (no partnership, no sponsorship, no official endorsement).
+It simply connects to publicly available API endpoints.
+
+* Community developed & maintained
+* For API-related issues → contact **EasyBill Support**
+* All trademarks & logos belong to their respective owners
+
 ## 📄 License
 
+**MIT License**
+Contributions and pull requests are welcome!
 This project is licensed under the **MIT License**.
 
 ---

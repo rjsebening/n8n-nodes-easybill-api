@@ -197,7 +197,7 @@ export async function send(this: IExecuteFunctions, index: number): Promise<INod
 	const sendType = this.getNodeParameter('sendType', index) as string;
 	const sendOptions = safeClone(this.getNodeParameter('sendOptions', index, {}) as any);
 
-	await easybillApiRequest.call(this, 'POST', `/documents/${id}/send/${sendType}`, sendOptions);
+	await easybillApiRequest.call(this, 'POST', `/documents/${id}/send/${sendType}`, { body: sendOptions });
 
 	return this.helpers.returnJsonArray({ success: true });
 }
@@ -211,7 +211,7 @@ export async function done(this: IExecuteFunctions, index: number): Promise<INod
 
 	const qs: Record<string, string> = {};
 	if (reasonForChange) {
-		qs.reasonForChange = reasonForChange;
+		qs.reason_for_change = reasonForChange;
 	}
 
 	const responseData = await easybillApiRequest.call(this, 'PUT', `/documents/${id}/done`, { qs });
