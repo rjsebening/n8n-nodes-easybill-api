@@ -29,7 +29,8 @@
     "dev": "tsc --watch",
     "format": "prettier nodes credentials --write",
     "lint": "eslint nodes credentials --ext .ts",
-    "lint:fix": "eslint nodes credentials --ext .ts --fix"
+    "lint:fix": "eslint nodes credentials --ext .ts --fix",
+    "lint:scan": "node scripts/scan-local.mjs"
   },
   "files": [
     "dist",

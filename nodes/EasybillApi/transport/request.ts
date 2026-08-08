@@ -73,21 +73,44 @@ export function normalizeEndpoint(endpoint: string): string {
 }
 
 /**
- * Resolves which credential type the user selected
+ * Wraps an unknown thrown value into an n8n node error.
+ *
+ * Errors that already are NodeApiError / NodeOperationError are passed through untouched, so
+ * the HTTP context requestCore attached to them is not lost to double wrapping.
+ */
+export function toNodeError(this: EasybillThis, error: unknown): Error {
+	if (error instanceof NodeApiError || error instanceof NodeOperationError) {
+		return error;
+	}
+
+	return new NodeApiError(this.getNode(), error as JsonObject);
+}
+
+/**
+ * Resolves which credential the user configured.
+ *
+ * Returns the credential *name* (for httpRequestWithAuthentication, which injects the auth
+ * headers from the credential's `authenticate` block) plus the base URL, which only lives on
+ * the credential itself. Probing by getCredentials works uniformly across all the execution
+ * contexts in EasybillThis, unlike reading the node's `authentication` parameter.
  */
 async function resolveCredentials(this: EasybillThis): Promise<{
-	type: 'bearer' | 'basic';
+	credentialName: string;
 	creds: IDataObject;
 }> {
 	try {
 		const creds = await this.getCredentials('easybillApiBearerApi');
-		return { type: 'bearer', creds };
-	} catch {}
+		return { credentialName: 'easybillApiBearerApi', creds };
+	} catch (error) {
+		this.logger.debug('Easybill: no Bearer credential, trying Basic Auth', { error });
+	}
 
 	try {
 		const creds = await this.getCredentials('easybillApiBasicApi');
-		return { type: 'basic', creds };
-	} catch {}
+		return { credentialName: 'easybillApiBasicApi', creds };
+	} catch (error) {
+		this.logger.debug('Easybill: no Basic Auth credential either', { error });
+	}
 
 	throw new NodeOperationError(this.getNode(), 'No Easybill credentials found (Bearer or Basic Auth).');
 }
@@ -115,7 +138,7 @@ async function requestCore(
 		headers?: IDataObject;
 	},
 ): Promise<any> {
-	const { type, creds } = await resolveCredentials.call(this);
+	const { credentialName, creds } = await resolveCredentials.call(this);
 
 	// ----------------------
 	// BASE URL HANDLING
@@ -131,23 +154,12 @@ async function requestCore(
 	// ----------------------
 	// DEFAULT HEADERS
 	// ----------------------
+	// Authorization is NOT set here — httpRequestWithAuthentication injects it from the
+	// credential's `authenticate` block, which is the single source of truth for auth.
 	const baseHeaders: IDataObject = {
 		Accept: 'application/json',
 		'X-Easybill-Escape': true,
 	};
-
-	// ----------------------
-	// AUTH HEADERS
-	// ----------------------
-	if (type === 'bearer') {
-		baseHeaders.Authorization = `Bearer ${creds.authToken || creds.apiKey}`;
-	}
-
-	if (type === 'basic') {
-		// @ts-ignore
-		const token = Buffer.from(`${creds.email}:${creds.apiKey}`).toString('base64');
-		baseHeaders.Authorization = `Basic ${token}`;
-	}
 
 	// ----------------------
 	// MERGE USER HEADERS
@@ -189,23 +201,15 @@ async function requestCore(
 	// EXECUTE REQUEST
 	// ----------------------
 	try {
-		const httpRequest = (this as any).helpers.httpRequest;
-		return await httpRequest.call(this, options);
+		return await this.helpers.httpRequestWithAuthentication.call(this, credentialName, options);
 	} catch (error: any) {
-		// ----------------------
-		// DEBUG LOGGING
-		// ----------------------
-		this.logger.error('--- EASYBILL DEBUG ERROR ---');
-		this.logger.error('URL: ' + finalUrl);
-		this.logger.error('METHOD: ' + method);
-		this.logger.error('REQUEST HEADERS: ' + JSON.stringify(mergedHeaders));
-		this.logger.error('REQUEST BODY: ' + JSON.stringify(body || {}));
-		this.logger.error('REQUEST QS: ' + JSON.stringify(qs || {}));
-
-		const raw = error.response?.data ?? error.response?.body ?? error.message ?? error;
-
-		this.logger.error('RAW ERROR: ' + JSON.stringify(raw));
-		this.logger.error('--------------------------------');
+		// Debug only, and deliberately without headers or body: the Authorization header and the
+		// request payload (customer PII) must never reach the execution log.
+		this.logger.debug('Easybill request failed', {
+			method,
+			url: finalUrl,
+			raw: error.response?.data ?? error.response?.body ?? error.message ?? String(error),
+		});
 
 		throw new NodeApiError(this.getNode(), error as JsonObject, {
 			message: 'Easybill API request failed',

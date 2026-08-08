@@ -1,4 +1,4 @@
-import { IExecuteFunctions, INodeExecutionData, IHttpRequestOptions } from 'n8n-workflow';
+import { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
 import { easybillApiRequest } from '../../transport/request';
 
 export async function get(this: IExecuteFunctions, index: number): Promise<INodeExecutionData[]> {
@@ -26,34 +26,31 @@ export async function downloadItem(this: IExecuteFunctions, index: number): Prom
 	const versionId = this.getNodeParameter('versionId', index) as number;
 	const versionItemId = this.getNodeParameter('versionItemId', index) as number;
 
-	const credentials = await this.getCredentials('easybillApi');
-
-	const options: IHttpRequestOptions = {
-		method: 'GET',
-		url: `https://api.easybill.de/rest/v1/documents/${documentId}/versions/${versionId}/items/${versionItemId}/download`,
-		headers: {
-			Authorization: `Bearer ${credentials.apiKey}`,
-		},
-		returnFullResponse: true,
-		encoding: 'arraybuffer', // n8n binary mode
-		json: false,
-	};
-
-	const response = await this.helpers.httpRequest(options);
-
-	// @ts-ignore - Buffer exists globally in Node.js even if TS doesn't know it
-	const fileBuffer = Buffer.from(response.body as ArrayBuffer);
-
-	const binaryData = await this.helpers.prepareBinaryData(
-		fileBuffer,
-		`version_item_${versionItemId}.bin`,
-		response.headers?.['content-type'] ?? 'application/octet-stream',
+	const response = await easybillApiRequest.call(
+		this,
+		'GET',
+		`/documents/${documentId}/versions/${versionId}/items/${versionItemId}/download`,
+		{ binary: true },
 	);
+
+	const { body, headers } = response;
+
+	const mimeType = headers['content-type'] || 'application/octet-stream';
+
+	let fileName = `version_item_${versionItemId}`;
+	const disposition = headers['content-disposition'];
+	if (disposition) {
+		const match = disposition.match(/filename="(.+?)"/);
+		if (match) fileName = match[1];
+	}
+
+	const binaryData = await this.helpers.prepareBinaryData(body, fileName, mimeType);
 
 	return [
 		{
 			json: { success: true, documentId, versionId, versionItemId },
 			binary: { data: binaryData },
+			pairedItem: { item: index },
 		},
 	];
 }

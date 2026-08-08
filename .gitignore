@@ -55,3 +55,5 @@ coverage/
 # Temporary folders
 tmp/
 temp/
+# Isolated install of the community-package scanner (npm run lint:scan)
+scripts/.scan-tools/

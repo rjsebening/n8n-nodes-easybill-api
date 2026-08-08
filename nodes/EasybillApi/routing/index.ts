@@ -1,4 +1,5 @@
 import { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
+import { toNodeError } from '../transport/request';
 import * as Raw from '../resources/Raw';
 import * as Customer from '../resources/Customer';
 import * as Document from '../resources/Document';
@@ -112,10 +113,10 @@ export async function router(this: IExecuteFunctions): Promise<INodeExecutionDat
 			}
 		} catch (error) {
 			if (this.continueOnFail()) {
-				returnData.push({ json: { error: error.message } });
+				returnData.push({ json: { error: (error as Error).message }, pairedItem: { item: i } });
 				continue;
 			}
-			throw error;
+			throw toNodeError.call(this, error);
 		}
 	}
 

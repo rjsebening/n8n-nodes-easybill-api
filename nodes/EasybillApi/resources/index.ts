@@ -143,6 +143,5 @@ export const allResourceProperties = [
 	...WebHook.description.webHookOperations,
 	...WebHook.description.webHookFields,
 
-	...Raw.description.rawOperations,
-	...Raw.description.rawFields,
+	...Raw.description.rawProperties,
 ];

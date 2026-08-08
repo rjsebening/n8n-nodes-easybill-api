@@ -1,6 +1,6 @@
-import { IExecuteFunctions, INodeExecutionData, NodeApiError } from 'n8n-workflow';
+import { IExecuteFunctions, INodeExecutionData, NodeApiError, NodeOperationError } from 'n8n-workflow';
 
-import { easybillApiRequest } from '../../transport/request';
+import { easybillApiRequest, toNodeError } from '../../transport/request';
 
 // -----------------------------------------------------------
 // Helper: ensures JSON-safe cloning (removes circular structures)
@@ -12,7 +12,7 @@ function safeClone<T>(data: T): T {
 // -----------------------------------------------------------
 // Helper: validate and normalize Items JSON
 // -----------------------------------------------------------
-function getItemsJson(param: any): any[] | null {
+function getItemsJson(executeFunctions: IExecuteFunctions, param: any): any[] | null {
 	if (!param) return null;
 
 	let items = param;
@@ -22,22 +22,22 @@ function getItemsJson(param: any): any[] | null {
 		try {
 			items = JSON.parse(items);
 		} catch {
-			throw new Error('Items JSON must be valid JSON.');
+			throw new NodeOperationError(executeFunctions.getNode(), 'Items JSON must be valid JSON.');
 		}
 	}
 
 	// Must be array
 	if (!Array.isArray(items)) {
-		throw new Error('Items JSON must be an array.');
+		throw new NodeOperationError(executeFunctions.getNode(), 'Items JSON must be an array.');
 	}
 
 	// All entries must be objects with at least position_id
 	for (const item of items) {
 		if (typeof item !== 'object' || Array.isArray(item)) {
-			throw new Error('Each item must be an object.');
+			throw new NodeOperationError(executeFunctions.getNode(), 'Each item must be an object.');
 		}
 		if (!item.position_id) {
-			throw new Error('Each item must contain position_id.');
+			throw new NodeOperationError(executeFunctions.getNode(), 'Each item must contain position_id.');
 		}
 	}
 
@@ -81,7 +81,7 @@ export async function create(this: IExecuteFunctions, index: number): Promise<IN
 	const type = this.getNodeParameter('type', index) as string;
 
 	const itemsParam = this.getNodeParameter('itemsJson', index, null);
-	const itemsJson = getItemsJson(itemsParam);
+	const itemsJson = getItemsJson(this, itemsParam);
 
 	const additionalFieldsRaw = this.getNodeParameter('additionalFields', index, {}) as Record<string, any>;
 
@@ -112,7 +112,7 @@ export async function update(this: IExecuteFunctions, index: number): Promise<IN
 	const id = this.getNodeParameter('id', index) as number;
 
 	const itemsParam = this.getNodeParameter('itemsJson', index, null);
-	const itemsJson = getItemsJson(itemsParam);
+	const itemsJson = getItemsJson(this, itemsParam);
 
 	const additionalFieldsRaw = this.getNodeParameter('additionalFields', index, {}) as Record<string, any>;
 
@@ -324,7 +324,7 @@ export async function download(this: IExecuteFunctions, index: number): Promise<
 				message: `Easybill: Format "${acceptHeader}" wird für Dokument ${id} nicht unterstützt.`,
 			});
 		}
-		throw error;
+		throw toNodeError.call(this, error);
 	}
 
 	const { body, headers } = response;

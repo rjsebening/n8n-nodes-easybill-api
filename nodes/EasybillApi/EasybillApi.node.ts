@@ -1,4 +1,10 @@
-import { IExecuteFunctions, INodeExecutionData, INodeType, INodeTypeDescription } from 'n8n-workflow';
+import {
+	IExecuteFunctions,
+	INodeExecutionData,
+	INodeType,
+	INodeTypeDescription,
+	NodeConnectionTypes,
+} from 'n8n-workflow';
 import { router } from './routing';
 
 import * as Resources from './resources';
@@ -15,15 +21,16 @@ export class EasybillApi implements INodeType {
 		},
 		group: ['transform'],
 		version: 1,
+		usableAsTool: true,
 		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
-		description: 'Consume Easybill API (powered by agentur-systeme.de)',
+		description: 'Consume Easybill API (powered by joergsebening.de)',
 		defaults: {
 			name: 'Easybill API',
 			// @ts-expect-error
-			description: 'Consume Easybill API (powered by agentur-systeme.de)',
+			description: 'Consume Easybill API (powered by joergsebening.de)',
 		},
-		inputs: ['main'],
-		outputs: ['main'],
+		inputs: [NodeConnectionTypes.Main],
+		outputs: [NodeConnectionTypes.Main],
 		credentials: [
 			{
 				name: 'easybillApiBasicApi',

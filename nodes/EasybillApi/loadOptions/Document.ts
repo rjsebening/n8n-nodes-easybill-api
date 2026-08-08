@@ -7,7 +7,7 @@ export async function loadDocumentOptions(this: ILoadOptionsFunctions): Promise<
 	});
 	if (!responseData.items) return [];
 	return responseData.items.map((item: any) => ({
-		name: item.title || item.number || item.id,
+		name: item.type ? `${item.id} - ${item.type}` : String(item.id),
 		value: item.id,
 	}));
 }

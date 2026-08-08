@@ -1,9 +1,19 @@
-import { ICredentialType, INodeProperties, IAuthenticate } from 'n8n-workflow';
+import {
+	ICredentialType,
+	ICredentialTestRequest,
+	Icon,
+	INodeProperties,
+	IAuthenticateGeneric,
+} from 'n8n-workflow';
 
 export class EasybillApiBasicApi implements ICredentialType {
 	name = 'easybillApiBasicApi';
 	displayName = 'Easybill API (Basic Auth) API';
 	documentationUrl = 'https://api.easybill.de/rest/v1/CHANGELOG.md';
+	icon: Icon = {
+		light: 'file:../nodes/EasybillApi/icons/icon-light.svg',
+		dark: 'file:../nodes/EasybillApi/icons/icon-dark.svg',
+	};
 
 	properties: INodeProperties[] = [
 		{
@@ -34,12 +44,22 @@ export class EasybillApiBasicApi implements ICredentialType {
 		},
 	];
 
-	authenticate: IAuthenticate = {
+	authenticate: IAuthenticateGeneric = {
 		type: 'generic',
 		properties: {
-			headers: {
-				Authorization: 'Basic {{$base64Encode(`${$credentials.email}:${$credentials.apiKey}`)}}',
+			auth: {
+				username: '={{$credentials.email}}',
+				password: '={{$credentials.apiKey}}',
 			},
+		},
+	};
+
+	test: ICredentialTestRequest = {
+		request: {
+			baseURL: '={{$credentials.baseUrl}}',
+			url: '/customers',
+			method: 'GET',
+			qs: { limit: 1 },
 		},
 	};
 }
