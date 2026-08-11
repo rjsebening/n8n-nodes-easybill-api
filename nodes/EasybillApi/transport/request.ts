@@ -38,7 +38,7 @@ export function formatEasybillDate(input: string | Date): string {
 export function formatEasybillDateTime(input: string | Date): string {
 	const d = new Date(input);
 
-	// Konvertierung in Europe/Berlin — manuell, ohne externe Libs
+	// Converted to Europe/Berlin by hand, without an external library
 	const berlinOffset = -new Date().getTimezoneOffset() / 60; // in Stunden
 	const utc = d.getTime() + d.getTimezoneOffset() * 60000; // UTC millisekunden
 	const berlin = new Date(utc + berlinOffset * 3600000);
@@ -183,7 +183,7 @@ async function requestCore(
 
 	if (formData) {
 		options.body = formData;
-		// NOTE: multipart boundary wird vom httpRequest selbst gesetzt.
+		// NOTE: the multipart boundary is set by httpRequest itself.
 	}
 
 	if (body && !formData) {

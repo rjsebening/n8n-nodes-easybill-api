@@ -311,9 +311,8 @@ export async function download(this: IExecuteFunctions, index: number): Promise<
 			qs: {},
 			body: {},
 			formData: {},
-			// accept header wird vom transporter gesetzt
-			// wir müssen es nur an params übergeben:
-			// params.headers überschreibt im transporter
+			// The transport sets the Accept header; passing it via params.headers
+			// overrides the default there.
 			headers: {
 				Accept: acceptHeader,
 			},
