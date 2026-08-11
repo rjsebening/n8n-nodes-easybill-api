@@ -34,7 +34,7 @@ const TOOLS_MANIFEST = {
 	private: true,
 	description: 'Isolated install of the n8n community-package scanner. Not part of the package.',
 	dependencies: {
-		'@n8n/scan-community-package': '0.31.0',
+		'@n8n/scan-community-package': '0.32.0',
 		// Pinned so it hoists ahead of the scanner's own typescript@7.0.2, which the parser rejects.
 		typescript: '6.0.3',
 	},
